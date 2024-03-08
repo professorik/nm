@@ -1,64 +1,49 @@
 import utils
-import conduction_model as cm
-import conduction_implicit_model as cim
+import projection_model as pm
+import projection_model_2 as pm_2
 import numpy as np
 import time
 
 
-def g(x) -> float:
-    return 1
+def phi_k(self, x, k):
+    k -= 1
+    if np.abs(x - self.xk[k]) > self.h:
+        return 0
+    if self.xk[k - 1] <= x <= self.xk[k]:
+        return (x - self.xk[k - 1]) * self.ih
+    return (self.xk[k + 1] - x) * self.ih
 
 
-def f(x, t) -> float:
-    return 0
+def d_phi_k(self, x, k):
+    k -= 1
+    if np.abs(x - self.xk[k]) > self.h:
+        return 0
+    if self.xk[k] <= x <= self.xk[k + 1]:
+        return -self.ih
+    return self.ih
 
 
-def u0(x):
-    return np.sin(x * np.pi)
+def g(x):
+    return np.exp(x)
 
 
-def a0(t):
-    return np.sin(t * np.pi / 2)
+def f(x):
+    return x**2
 
 
-def b0(t):
-    return a0(t)
-
-
-def problem_1():
-    start = time.time()
-    model = cm.Model(g, f, u0, a0, b0, length=1, time=1, N=50, K=-1)
-    table = model.solve()
-    #model_2 = cm.Model(g, f, u0, a0, b0, length=1, time=1, N=100, K=-1)
-    #table_2 = model_2.solve()
-    # Prints 8.676048278808594
-    print(time.time() - start)
-
-    #utils.heatmap(table, length=1, time=1)
-    #utils.show_plot(table[0], length=1, l='-g+', label='Initial values')
-    utils.show_plot(table[-1], length=1, label='50 points')
-    #utils.show_plot(table_2[-1], length=1, l='-r+', label='100 points')
-    # utils.print_table(table)
-
-
-def problem_2():
-    start = time.time()
-    model = cim.Model(u0, a0, b0, length=1, time=1, N=50, K=100)
-    table = model.solve()
-    #model_2 = cim.Model(u0, a0, b0, length=1, time=1, N=100, K=100)
-    #table_2 = model_2.solve()
-    # Prints 0.03999686241149902
-    print(time.time() - start)
-
-    #utils.heatmap(table, length=1, time=1)
-    #utils.show_plot(table[0], length=1, l='-g+', label='Initial values')
-    utils.show_plot(table[-1], length=1, label='100 points', l='-r+')
-    #utils.show_plot(table_2[-1], length=1, l='-r+', label='100 points')
-    # utils.print_table(table)
+def ans(x):
+    return 3 - np.exp(-x) * (x**3 + 3*(x**2) + 6*x + 6) / 3
 
 
 if __name__ == '__main__':
-    problem_1()
-    problem_2()
+    N = 20
+    model = pm.Model(g, f, v1=(0, 1), v2=(1, 1), N=N)
+    model.solve()
+    model_2 = pm_2.Model(g, f, v1=(0, 1), v2=(1, 1), N=N)
+    model_2.solve()
+
+    #utils.show_plot(ans(np.linspace(0, 1, N)), length=1, l='-g+', label='Original')
+    utils.show_plot(model.get_value(np.linspace(0, 1, N)), length=1, l='-r+', label='$\\varphi_k=sin(xk\pi)$')
+    utils.show_plot(model_2.get_value(np.linspace(0, 1, N)), length=1, label='linear bf')
     utils.plt.legend()
     utils.plt.show()

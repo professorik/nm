@@ -20,5 +20,5 @@ def heatmap(arr: np.ndarray, length: float = 0, time: float = 0):
 
 
 def show_plot(y, length, l='-b+', label=''):
-    plt.figure('Temperature')
+    plt.figure('Plot')
     plt.plot(np.linspace(0, length, len(y)), y, l, label=label)
