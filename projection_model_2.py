@@ -30,10 +30,3 @@ class Model(pm.Model):
 
     def solve(self):
         super().solve((self.g(1) - self.g(0)) * self.ih)
-
-    def get_value(self, x):
-        res = self.phi_0(x)
-        for xi in x:
-            for k in range(1, self.N + 1):
-                res += self.a[k - 1] * self.phi_k(xi, k)
-        return res

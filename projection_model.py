@@ -35,7 +35,9 @@ class Model:
         self.a = scipy.linalg.solve(-C + delta, d)
 
     def get_value(self, x):
-        res = self.phi_0(x)
-        for k in range(1, self.N + 1):
-            res += self.a[k - 1] * self.phi_k(x, k)
+        res = np.zeros(len(x))
+        for i in range(len(x)):
+            res[i] = self.phi_0(x[i])
+            for k in range(1, self.N + 1):
+                res[i] += self.a[k - 1] * self.phi_k(x[i], k)
         return res

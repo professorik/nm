@@ -5,24 +5,6 @@ import numpy as np
 import time
 
 
-def phi_k(self, x, k):
-    k -= 1
-    if np.abs(x - self.xk[k]) > self.h:
-        return 0
-    if self.xk[k - 1] <= x <= self.xk[k]:
-        return (x - self.xk[k - 1]) * self.ih
-    return (self.xk[k + 1] - x) * self.ih
-
-
-def d_phi_k(self, x, k):
-    k -= 1
-    if np.abs(x - self.xk[k]) > self.h:
-        return 0
-    if self.xk[k] <= x <= self.xk[k + 1]:
-        return -self.ih
-    return self.ih
-
-
 def g(x):
     return np.exp(x)
 
